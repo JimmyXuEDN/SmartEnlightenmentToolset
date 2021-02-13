@@ -1,5 +1,5 @@
 {
-    "name": "SmartEnlightenmentToolsets/api",
+    "name": "smart-enlightenment-toolsets/api",
     "description": "An API toolsets based on thinkphp6.",
     "type": "project",
     "version":"0.0.1",
