@@ -5,5 +5,9 @@
 return [
     // 指令定义
     'commands' => [
+        'hour' => 'app\command\Hour',
+        'day' => 'app\command\Day',
+        'week' => 'app\command\Week',
+        'month' => 'app\command\Month'
     ],
 ];
