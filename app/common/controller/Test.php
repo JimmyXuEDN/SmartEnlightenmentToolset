@@ -1,21 +1,31 @@
 <?php
 namespace app\common\controller;
+use AlibabaCloud\Client\Exception\ClientException;
+use AlibabaCloud\Client\Exception\ServerException;
 use aliyun\green\Ocr;
 use aliyun\imm\ImmExtend;
 use aliyun\ocr\lib;
 use aliyun\oss\File;
 use aliyun\sts\StsExtend;
+use app\base\model\GlobalConfigType;
 use app\integral\model\IntegralRecord;
 use app\member\model\MemberReal;
 use app\mp\model\Mp;
 use app\util\controller\Qrcode;
+use email\phpmailer\Mail;
+use OSS\Core\OssException;
 use pay\data\TransferBank;
 use pay\data\TransferPurse;
+use pay\exception\PayException;
 use pay\Pay;
 use pay\data\Order;
 use pay\data\Charge;
 use app\message\model\MessageTemplate;
 use app\message\model\Message;
+use think\exception\DbException;
+use think\facade\Env;
+use think\facade\Request;
+use think\response\Json;
 use wx\mp\lib\api\uniformMessage;
 use wx\official\lib\Util;
 use think\facade\Cache;
@@ -29,16 +39,19 @@ class Test
 {
     public function index()
     {
-        return json(saas_make_response(SUCCESS, [], '通配测试方法'));
+        $data = GlobalConfigType::with(['config'])->select();;
+        return json(saas_make_response(SUCCESS, $data, '通配测试方法'));
     }
 
     /**
-     * 清理缓存
+     * 对字符串进行RSA公钥加密
+     * @param $data
+     * @return Json
      */
-    public function clearCache()
+    public function rsa_encode()
     {
-        Cache::clear();
-        return json(saas_make_response(SUCCESS));
+        $data = Env::get('app.rsa_key') . '_' . Request::post('string');
+        return json(saas_make_response(SUCCESS, ['res' => saas_rsa_encode($data)]));
     }
 
     public function test()
@@ -54,7 +67,7 @@ class Test
      * 转化命令:PKCS#1 转 PKCS#8:
      * openssl rsa -RSAPublicKey_in -in <filename> -pubout
      *
-     * @throws \pay\exception\PayException
+     * @throws PayException
      */
     public function get_wx_pay_to_bank_rsa1()
     {
@@ -282,7 +295,7 @@ class Test
 
     public function test_send_mail()
     {
-        $model = new \email\phpmailer\Mail();
+        $model = new Mail();
         $model->send_mail('316392750@qq.com', 'TestName', 'TestSubject', '这是一封来自游视界图库的测试通知邮件。');
     }
 
@@ -379,9 +392,9 @@ class Test
     }
 
     /**
-     * @throws \AlibabaCloud\Client\Exception\ClientException
-     * @throws \AlibabaCloud\Client\Exception\ServerException
-     * @throws \OSS\Core\OssException
+     * @throws ClientException
+     * @throws ServerException
+     * @throws OssException
      */
     public function test_green_ocr()
     {
@@ -423,7 +436,7 @@ class Test
     }
 
     /**
-     * @throws \think\exception\DbException
+     * @throws DbException
      */
     public function correctIntegralRecord()
     {

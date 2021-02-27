@@ -11,35 +11,16 @@
 use think\facade\Route;
 
 Route::group('app', function () {
-    Route::resource('member', 'ApiMember');
-    Route::resource('search', 'ApiMemberSearch');
-    Route::resource('address', 'ApiMemberAddress');
-    Route::resource('bank', 'ApiMemberBank');
-    Route::post('mobile', 'ApiMember/bindTel');
-    Route::post('account', 'ApiMember/editAccount');
-    Route::post('password', 'ApiMember/editPassword');
-    Route::get('children', 'ApiMember/getSonList');
-    Route::get('subscribe', 'ApiMember/subscribe');
-
-    Route::resource('collection','ApiMemberCollection');
-    Route::resource('feedback','ApiMemberFeedback');
-
-    Route::resource('cart','ApiMemberCart');
-
+    Route::get('detail', 'ApiMember/detail');
+    Route::post('update', 'ApiMember/update');
     Route::resource('real','ApiMemberReal');
-
-    Route::resource('conference','ApiMemberConference');
-    Route::resource('mod','ApiMemberMod');
+    Route::resource('address', 'ApiMemberAddress');
 });
 
 
 Route::group('admin', function () {
-    Route::resource('member','AdminMember');
-    Route::post('sort','AdminMember/memberSort');
-    Route::resource('feedback','AdminMemberFeedback');
+    Route::resource('','AdminMember');
     Route::resource('real','AdminMemberReal');
-    Route::resource('mod','AdminMemberMod');
-    Route::post('street/statistics','AdminMember/streetStatistics');
 });
 
 /**

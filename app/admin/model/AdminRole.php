@@ -9,7 +9,7 @@ class AdminRole extends BaseModel
 
     public function accesses()
     {
-        return $this->hasMany(AdminAccess::class, 'role_id', 'id');
+        return $this->hasMany(AdminAccess::class);
     }
 
 }

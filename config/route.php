@@ -46,6 +46,6 @@ return [
     'middleware'            => [
         \think\middleware\AllowCrossDomain::class,
         \app\base\middleware\SignAuth::class,
-        \app\base\middleware\ModuleAuth::class,
+        \app\base\middleware\RouteAuth::class,
     ]
 ];

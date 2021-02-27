@@ -3,6 +3,7 @@
 namespace app\base\exception;
 
 use Exception;
+use think\Response;
 
 /**
  * 中断类型回复通过抛出错误返回
@@ -25,7 +26,7 @@ class SaasException extends Exception
     public function __construct(array $data = [])
     {
         $this->data = $data;
-        parent::__construct();
+        parent::__construct($data['responseHeader']['message'], $data['responseHeader']['returnCode']);
     }
 
     public function getData()

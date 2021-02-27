@@ -2,6 +2,9 @@
 
 namespace app\base\model;
 
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
 use think\Model;
 
 class BaseModel extends Model
@@ -19,6 +22,9 @@ class BaseModel extends Model
      * @param string $has
      * @param array $hasMap
      * @return array
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public static function getList($with = [], $field = [], $map = [], $order = [], $withCount = [], $has = '', $hasMap = [])
     {

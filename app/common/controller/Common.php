@@ -2,12 +2,14 @@
 namespace app\common\controller;
 
 use app\BaseController;
-use app\base\model\GlobalBank;
-use app\base\model\GlobalConfig;
-use app\base\model\GlobalIndustryCategory;
-use app\base\model\GlobalModule;
-use app\base\model\GlobalMotto;
-use wx\official\lib\Util;
+use app\common\model\GlobalBank;
+use app\common\model\GlobalIndustryCategory;
+use app\common\model\GlobalMotto;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\ModelNotFoundException;
+use think\Exception;
+use think\exception\DbException;
+use think\response\Json;
 
 /**
  * 通用接口,一些工具类的接口都 放在这里
@@ -33,86 +35,11 @@ class Common extends BaseController
     }
 
     /**
-     * 模块
-     */
-    public function module()
-    {
-        $model = new GlobalModule();
-        $res['list'] = $model
-            ->where([
-                'is_installed' => 1,
-                'is_available' => 1
-            ])
-            ->with(['globalModuleControllers'])
-            ->order('list_order DESC,create_time DESC')
-            ->select();
-        return $this->sendResponse(0, $res);
-    }
-
-    /**
-     * TODO 移动到对应的扩展
-     * 手机号码发送短信验证码
-     * @param $tel
-     */
-    public function sendSms($tel)
-    {
-        if(!saas_is_tel($tel))
-        {
-            $this->sendResponse(ERROR_LOGIC, null, 'error_not_tel');
-        }
-        \sms\SmsUtil::sendAuthMessage($tel);
-        $this->sendResponse(0);
-    }
-
-    /**
-     * TODO 移动到鉴权
-     * 短信验证码核验
-     * @param $tel
-     * @param $code
-     */
-    public function checkSms($tel, $code)
-    {
-        $result['check'] = 0;
-        if(\sms\SmsUtil::checkAuthMessage($tel, $code))
-        {
-            $result['check'] = 1;
-        }
-        $this->sendResponse(0, $result);
-    }
-
-    /**
-     * TODO 移动到扩展
-     * 获取公众号网页js签名
-     */
-    public function getJsapiSignatrue(){
-        $url = $this->getParams('url');
-        \wx\official\lib\Config::setConfig(saas_config('wx_official'));
-        $res = Util::getJsapiSignatrue($url);
-        $this->sendResponse(0, $res);
-    }
-
-    /**
-     * TODO 移动到扩展
-     * 获取openid
-     * @param $code
-     */
-    public function getWxOpenid($code)
-    {
-        $third_login = new \wx\official\lib\ThirdLogin();
-        $result = $third_login->get_user_info("snsapi_base", $code);
-        if ($result ['status'] == 2000) {
-            $this->sendResponse (ERROR_LOGIC, null, json_encode($result['data']));
-        }
-        $res['openid'] = $result['data']['openid'];
-        $this->sendResponse(0, $res);
-    }
-
-    /**
      * 行业分类
-     * @return \think\response\Json
-     * @throws \think\db\exception\DataNotFoundException
+     * @return Json
+     * @throws DataNotFoundException
      * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @throws ModelNotFoundException
      */
     public function industry_category()
     {
@@ -122,7 +49,10 @@ class Common extends BaseController
 
     /**
      * 银行列表
-     * @throws \think\exception\DbException
+     * @return Json
+     * @throws DataNotFoundException
+     * @throws ModelNotFoundException
+     * @throws \think\db\exception\DbException
      */
     public function bank()
     {
@@ -132,10 +62,10 @@ class Common extends BaseController
 
     /**
      * 随机获取一条motto
-     * @throws \think\Exception
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
+     * @throws Exception
+     * @throws DataNotFoundException
+     * @throws ModelNotFoundException
+     * @throws DbException
      */
     public function getOneRandomMotto()
     {

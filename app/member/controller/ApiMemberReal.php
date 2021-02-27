@@ -3,33 +3,19 @@
 namespace app\member\controller;
 
 use app\base\controller\ApiBaseController;
+use app\base\exception\SaasException;
 use app\member\model\MemberReal;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
+use think\Response;
 
 class ApiMemberReal extends ApiBaseController
 {
     /**
-     * 显示资源列表
-     *
-     * @return \think\Response
-     */
-    public function index()
-    {
-    }
-
-    /**
-     * 显示创建资源表单页.
-     *
-     * @return \think\Response
-     */
-    public function create()
-    {
-    }
-
-    /**
-     * 保存新建的资源
-     *
-     * @param  \think\Request
-     * @return \think\Response
+     * 添加
+     * @return Response
+     * @throws SaasException
      */
     public function save()
     {
@@ -46,46 +32,17 @@ class ApiMemberReal extends ApiBaseController
     }
 
     /**
-     * 显示指定的资源
-     *
-     * @param  int $id
-     * @return \think\Response
+     * 详情
+     * @param int $id
+     * @return Response
+     * @throws SaasException
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public function read($id)
     {
-        $res = MemberReal::where(['member_id' => $this->getMemberId()])->find();
+        $res = MemberReal::where(['id' => $this->getMemberId()])->find();
         return $this->sendResponse(0, $res);
     }
-
-    /**
-     * 显示编辑资源表单页.
-     *
-     * @param  int $id
-     * @return \think\Response
-     */
-    public function edit($id)
-    {
-    }
-
-    /**
-     * 保存更新的资源
-     *
-     * @param  \think\Request
-     * @param  int $id
-     * @return \think\Response
-     */
-    public function update($id)
-    {
-    }
-
-    /**
-     * 删除指定资源
-     *
-     * @param  int $id
-     * @return \think\Response
-     */
-    public function delete($id)
-    {
-    }
-
 }

@@ -9,7 +9,11 @@
 namespace app\base\model;
 
 
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
 use think\facade\Env;
+use think\model\relation\HasMany;
 
 /**
  * Class GlobalConfigType
@@ -18,18 +22,18 @@ use think\facade\Env;
 class GlobalConfigType extends BaseModel
 {
     /**
-     * @return \think\model\relation\HasMany
+     * @return HasMany
      */
     public function config()
     {
-        return $this->hasMany(GlobalConfig::class, 'global_config_type_id', 'global_config_type_id');
+        return $this->hasMany(GlobalConfig::class);
     }
 
     /**
      * 加载配置
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public static function loadConfig()
     {
@@ -42,14 +46,13 @@ class GlobalConfigType extends BaseModel
             $config_array = cache('system_config');
         }
         if (!$config_array) {
-            $config_types = self::select();
+            $config_types = self::with(['config'])->select();
             foreach ($config_types as $type) {
                 $config_array[$type->type_name] = [];
                 foreach ($type->config as $config) {
                     $config_array[$type->type_name][$config->config_name] = $config->config_val;
                 }
             }
-
             cache('system_config', $config_array);
         }
         config($config_array);

@@ -10,9 +10,6 @@ use app\member\model\Member;
 
 class Message extends BaseModel
 {
-
-    protected $pk = 'message_id';
-
     public function messageMember()
     {
         return $this->hasMany(MessageMember::class, 'message_id', 'message_id');
@@ -116,7 +113,7 @@ class Message extends BaseModel
     public static function sendAllUserMessageByTemplate($template_name, $params, $jump_type = 0, $jump_aim = '', $send_type = 0)
     {
         $message = MessageTemplate::createMessage($template_name, $params, $jump_type, $jump_aim);
-        $all_users = AdminUser::where(['role_id' => 0])->select();
+        $all_users = AdminUser::where(['admin_role_id' => 0])->select();
         foreach ($all_users as $u) {
             self::sendUserMessage($message, $u->id, $send_type);
         }

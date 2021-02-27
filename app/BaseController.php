@@ -5,6 +5,7 @@ namespace app;
 
 use think\App;
 use think\exception\ValidateException;
+use think\response\Json;
 use think\Validate;
 
 /**
@@ -20,7 +21,7 @@ abstract class BaseController
 
     /**
      * 应用实例
-     * @var \think\App
+     * @var App
      */
     protected $app;
 
@@ -109,7 +110,7 @@ abstract class BaseController
      * @param array $data //返回的数据
      * @param string $other_message //额外的信息
      * @param array $message_var
-     * @return \think\response\Json
+     * @return Json
      */
     public function sendResponse(int $code, $data = [], $other_message = '', $message_var = [])
     {

@@ -3,8 +3,11 @@ declare (strict_types=1);
 
 namespace app\base\middleware;
 
+use app\base\exception\SaasException;
 use app\base\model\GlobalModule;
 use app\base\model\GlobalModuleController;
+use app\Request;
+use Closure;
 use think\facade\Env;
 use think\Response;
 
@@ -16,12 +19,12 @@ class SignAuth
 
     /**
      * 签名判断
-     * @param \app\Request $request
-     * @param \Closure $next
+     * @param Request $request
+     * @param Closure $next
      * @return Response
-     * @throws \app\base\exception\SaasException
+     * @throws SaasException
      */
-    public function handle($request, \Closure $next)
+    public function handle($request, Closure $next)
     {
         foreach ($this->except as $except) {
             if ($request->baseUrl() == $except) {
@@ -31,7 +34,7 @@ class SignAuth
 
         if (!Env::get('app_debug')) {
             if (!$request->header('sign') || !$request->header('requesttimestamp') || !$this->checkRsa($request->header('sign'), $request->header('requesttimestamp'))) {
-                return json(saas_make_response(3001, [], 'error_sign'));
+                return json(saas_make_response(3001));
             }
         }
 
@@ -43,18 +46,15 @@ class SignAuth
      * @param $sign
      * @param int $header_request_time
      * @return bool
-     * @throws \app\base\exception\SaasException
+     * @throws SaasException
      */
     private function checkRsa($sign, $header_request_time = 0)
     {
-        $private_key = saas_config('global.encrypt_private_key');
-        $public_key = saas_config('global.encrypt_key');
-        openssl_private_decrypt(base64_decode($sign), $decrypt_data, $private_key);
-        if (strpos($decrypt_data, $public_key) !== false) {
-            $request_time_stamp = explode('_', $decrypt_data);
-            if (isset($request_time_stamp[1]) && $request_time_stamp[1] == $header_request_time) {
-                return true;
-            }
+        // RSA解码参数
+        $request_time_stamp = saas_rsa_decode($sign);
+        // 能够正常解码且等于请求头中的请求时间requesttimestamp
+        if (!is_null($request_time_stamp) && $request_time_stamp == $header_request_time) {
+            return true;
         }
         return false;
     }

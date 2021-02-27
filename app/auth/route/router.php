@@ -16,7 +16,7 @@ Route::group('app', function () {
     Route::get('check/login', 'ApiLogin/isLogin');
     Route::post('wx/official', 'ApiLogin/wxOfficial');
     Route::post('wx/mp', 'ApiLogin/wxMp');
-    Route::post('forgetPassword','ApiLogin/forgetPassword');
+    Route::post('password/reset','ApiLogin/forgetPassword');
 });
 
 Route::group('admin', function () {

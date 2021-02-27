@@ -2,13 +2,14 @@
 
 namespace app\message\model;
 
+use app\base\exception\SaasException;
 use app\base\model\BaseModel;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
 
 class MessageTemplate extends BaseModel
 {
-
-    protected $pk = 'template_id';
-
     /**
      * 根据模板生成消息
      * @param string $template_name
@@ -16,6 +17,10 @@ class MessageTemplate extends BaseModel
      * @param int $jump_type
      * @param string $jump_aim
      * @return Message
+     * @throws SaasException
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public static function createMessage($template_name, $params, $jump_type = 0, $jump_aim = '')
     {

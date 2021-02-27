@@ -6,5 +6,4 @@ use app\base\model\BaseModel;
 
 class MemberToken extends BaseModel
 {
-
 }

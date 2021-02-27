@@ -3,15 +3,22 @@
 namespace app\member\controller;
 
 use app\base\controller\AdminBaseController;
+use app\base\exception\SaasException;
 use app\member\model\MemberReal;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
+use think\Response;
 
 class AdminMemberReal extends AdminBaseController
 {
 
     /**
      * 显示资源列表
-     *
-     * @return \think\Response
+     * @return Response
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public function index()
     {
@@ -20,29 +27,13 @@ class AdminMemberReal extends AdminBaseController
     }
 
     /**
-     * 显示创建资源表单页.
-     *
-     * @return \think\Response
-     */
-    public function create()
-    {
-    }
-
-    /**
-     * 保存新建的资源
-     *
-     * @param  \think\Request
-     * @return \think\Response
-     */
-    public function save()
-    {
-    }
-
-    /**
      * 显示指定的资源
      *
-     * @param  int $id
-     * @return \think\Response
+     * @param int $id
+     * @return Response
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public function read($id)
     {
@@ -51,38 +42,29 @@ class AdminMemberReal extends AdminBaseController
     }
 
     /**
-     * 显示编辑资源表单页.
-     *
-     * @param  int $id
-     * @return \think\Response
-     */
-    public function edit($id)
-    {
-    }
-
-    /**
      * 保存更新的资源
-     *
-     * @param  \think\Request
-     * @param  int $id
-     * @return \think\Response
+     * @param int $id
+     * @return Response
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
+     * @throws SaasException
      */
     public function update($id)
     {
-        $data['is_verify'] = $this->getParams('is_verify', true);
-        $data['verify_message'] = $this->getParams('verify_message', false);
         $model = MemberReal::find($id);
-        $model->save($data);
+        $model->save($this->getParams());
         return $this->sendResponse(0);
     }
 
     /**
      * 删除指定资源
-     *
      * @param  int $id
-     * @return \think\Response
+     * @return Response
      */
     public function delete($id)
     {
+        MemberReal::destroy($id);
+        return $this->sendResponse(SUCCESS);
     }
 }

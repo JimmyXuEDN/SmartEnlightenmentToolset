@@ -21,13 +21,13 @@ class Http extends Handle
     {
         // 参数验证错误
         if ($e instanceof ValidateException) {
-            return json($e->getError(), 422);
+            // return json($e->getError(), 422);
+            return json(saas_make_response(ERROR_PARAMS_CHECK, ['validateMessage' => $e->getError()]));
         }
 
         // 请求异常
-        trace('$request->isJson():' . $request->method(), 'debug');
         if ($e instanceof HttpException && $request->isJson()) {
-            return saas_make_response('ERROR_SYSTEM', ['message' => $e->getMessage(), 'code' => $e->getStatusCode()]);
+            return json(saas_make_response(ERROR_SYSTEM, ['message' => $e->getMessage(), 'code' => $e->getStatusCode()]));
         }
 
         // 请求异常

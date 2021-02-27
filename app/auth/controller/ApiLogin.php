@@ -2,32 +2,47 @@
 
 namespace app\auth\controller;
 
+use app\auth\model\AuthMember;
 use app\base\controller\ApiBaseController;
+use app\base\exception\SaasException;
 use app\base\util\SmsUtil;
-use app\member\model\AuthMember;
 use app\member\model\Member;
 use app\message\model\Message;
-use app\mp\model\Mp;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
+use think\response\Json;
 use wx\official\lib\MpLogin;
 use wx\official\lib\ThirdLogin;
 
 class ApiLogin extends ApiBaseController
 {
 
+    /**
+     * @return Json
+     * @throws SaasException
+     */
     public function mobile()
     {
         $this->validate($this->getParams(), 'app\member\validate\AuthMember.LoginMobile');
 
-        return $this->login(AuthMember::SAAS_AUTH_MOBILE, $this->getParams('mobile'), saas_password($this->getParams('password')));
+        return $this->login(AuthMember::SAAS_AUTH_MOBILE, $this->getParams('mobile'), saas_password(saas_rsa_decode($this->getParams('password'))));
     }
 
+    /**
+     * @return Json
+     * @throws SaasException
+     */
     public function account()
     {
         $this->validate($this->getParams(), 'app\member\validate\AuthMember.LoginAccount');
 
-        return $this->login(AuthMember::SAAS_AUTH_ACCOUNT, $this->getParams('account'), saas_password($this->getParams('password')));
+        return $this->login(AuthMember::SAAS_AUTH_ACCOUNT, $this->getParams('account'), saas_password(saas_rsa_decode($this->getParams('password'))));
     }
 
+    /**
+     * @return Json
+     */
     public function isLogin()
     {
         $member = $this->request->getMember();
@@ -38,6 +53,10 @@ class ApiLogin extends ApiBaseController
         return $this->sendResponse(SUCCESS, $data);
     }
 
+    /**
+     * @return Json
+     * @throws SaasException
+     */
     public function wxOfficial()
     {
         $this->validate($this->getParams(), 'app\member\validate\AuthMember.LoginWxOfficial');
@@ -78,6 +97,10 @@ class ApiLogin extends ApiBaseController
         return $this->sendResponse(SUCCESS, $res);
     }
 
+    /**
+     * @return Json
+     * @throws SaasException
+     */
     public function wxMp()
     {
         $code = $this->getParams('code', true);
@@ -122,6 +145,10 @@ class ApiLogin extends ApiBaseController
         return $this->sendResponse(SUCCESS, $res);
     }
 
+    /**
+     * @param string $identity_type
+     * @return int
+     */
     private function identityType2Int(string $identity_type)
     {
         switch ($identity_type) {
@@ -137,6 +164,13 @@ class ApiLogin extends ApiBaseController
         return AuthMember::SAAS_AUTH_WX_OFFICIAL;
     }
 
+    /**
+     * @param int $type
+     * @param string $identifier
+     * @param string $credential
+     * @param string $openid
+     * @return Json
+     */
     private function login(int $type, string $identifier, string $credential, string $openid = '')
     {
         $authMember = AuthMember::auth($type, $identifier, $credential, $openid);
@@ -158,6 +192,13 @@ class ApiLogin extends ApiBaseController
         return $this->sendResponse(SUCCESS, $res);
     }
 
+    /**
+     * @return Json
+     * @throws SaasException
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
+     */
     public function forgetPassword()
     {
         $account = $this->getParams('account');

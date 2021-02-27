@@ -6,5 +6,4 @@ use app\base\model\BaseModel;
 
 class MessageMember extends BaseModel
 {
-
 }

@@ -4,11 +4,12 @@
 namespace app\index\controller;
 
 
+use app\base\exception\SaasException;
+
 class Index
 {
     /**
      * @return string
-     * @throws \app\base\exception\SaasException
      */
     public function index()
     {

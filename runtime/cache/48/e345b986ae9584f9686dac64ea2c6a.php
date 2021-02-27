@@ -1,4 +1,4 @@
 <?php
 //000000000000
  exit();?>
-a:1:{s:4:"info";a:4:{s:7:"version";s:17:"V1.0.2.1806020001";s:16:"application_name";s:9:"排排兑";s:4:"logo";s:57:"http://img.wx-qz.com/feb08da9955dcae1d6996e3ffbced493.png";s:11:"description";s:43:"SmartEnlightenmentToolset斯图兰API框架";}}
+a:3:{s:6:"global";a:4:{s:7:"version";s:17:"V1.0.2.1806020001";s:16:"application_name";s:34:"SmartEnlightenmentToolset斯图兰";s:4:"logo";s:57:"http://img.wx-qz.com/feb08da9955dcae1d6996e3ffbced493.png";s:11:"description";s:43:"SmartEnlightenmentToolset斯图兰API框架";}s:4:"auth";a:6:{s:14:"password_level";s:1:"1";s:16:"password_expired";s:7:"2592000";s:10:"token_type";s:1:"1";s:13:"token_expired";s:7:"2592000";s:16:"limit_login_fail";s:1:"3";s:15:"limit_lock_span";s:4:"1200";}s:6:"member";a:5:{s:8:"is_sn_on";s:1:"1";s:6:"sn_pre";s:2:"16";s:9:"sn_suffix";s:2:"88";s:7:"sn_type";s:1:"1";s:15:"sn_number_start";s:5:"10000";}}
